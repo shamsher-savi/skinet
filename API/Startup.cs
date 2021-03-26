@@ -21,6 +21,7 @@ namespace API
             services.ConfigureControllers();
             services.ConfigureSwagger();
             services.ConfigureDbContext(_config);
+            services.ConfigureRepositories();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
