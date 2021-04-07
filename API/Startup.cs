@@ -1,4 +1,5 @@
 using API.Helpers;
+using API.Middleware;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -23,18 +24,21 @@ namespace API
             services.ConfigureDbContext(_config);
             services.ConfigureRepositories();
             services.ConfigureAutoMapper();
+            services.ConfigureValidationErrors();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-                app.UseSwagger();
-                app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
-            }
-
+            app.UseMiddleware<ExceptionMiddleware>();
+            app.UseSwaggerDocumentation();
+            //if (env.IsDevelopment())
+            //{
+            //app.UseDeveloperExceptionPage();
+            //app.UseSwagger();
+            //app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "API v1"));
+            //}
+            app.UseStatusCodePagesWithReExecute("/error/{0}");
             app.UseHttpsRedirection();
             app.UseRouting();
             app.UseStaticFiles();

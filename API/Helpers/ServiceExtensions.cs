@@ -1,6 +1,9 @@
+using System.Linq;
+using API.Errors;
 using Core.Interfaces;
 using Infrastructure.Data;
 using Infrastructure.Repositories;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,13 +15,6 @@ namespace API.Helpers
         public static void ConfigureControllers(this IServiceCollection services)
         {
             services.AddControllers();
-        }
-        public static void ConfigureSwagger(this IServiceCollection services)
-        {
-            services.AddSwaggerGen(c =>
-            {
-                c.SwaggerDoc("v1", new OpenApiInfo { Title = "API", Version = "v1" });
-            });
         }
         public static void ConfigureDbContext(this IServiceCollection services, IConfiguration config)
         {
@@ -32,6 +28,23 @@ namespace API.Helpers
         public static void ConfigureAutoMapper(this IServiceCollection services)
         {
             services.AddAutoMapper(typeof(MappingProfiles));
+        }
+        public static void ConfigureValidationErrors(this IServiceCollection services)
+        {
+            services.Configure<ApiBehaviorOptions>(options => {
+                options.InvalidModelStateResponseFactory = actionContext => {
+                  var errors = actionContext.ModelState
+                  .Where(e => e.Value.Errors.Count>0)
+                  .SelectMany(x => x.Value.Errors)
+                  .Select(x => x.ErrorMessage).ToArray();
+
+                  var errorResponse = new ApiValidationErrorResponse
+                  {
+                      Errors = errors
+                  };
+                  return new BadRequestObjectResult(errorResponse);
+                };
+            });
         }
     }
 }
