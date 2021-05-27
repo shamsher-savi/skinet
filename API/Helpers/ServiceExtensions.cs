@@ -46,5 +46,14 @@ namespace API.Helpers
                 };
             });
         }
+
+        public static void ConfigureCors(this IServiceCollection services)
+        {
+            services.AddCors( opt => {
+                opt.AddPolicy("CorsPolicy",policy => {
+                    policy.AllowAnyHeader().AllowAnyMethod().WithOrigins("https://localhost:4200");
+                });
+            });
+        }
     }
 }
