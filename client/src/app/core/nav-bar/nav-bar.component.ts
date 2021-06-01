@@ -1,8 +1,9 @@
 import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { IBrand } from 'src/app/shared/models/brand';
 import { IProduct } from 'src/app/shared/models/product';
+import { IType } from 'src/app/shared/models/productType';
 import { ShopParams } from 'src/app/shared/models/shopParams';
 import { ShopService } from 'src/app/shop/shop.service';
-
 @Component({
   selector: 'app-nav-bar',
   templateUrl: './nav-bar.component.html',
@@ -11,7 +12,9 @@ import { ShopService } from 'src/app/shop/shop.service';
 export class NavBarComponent implements OnInit {
   @ViewChild('search', {static: true}) searchTerm: ElementRef;
   shopParams = new ShopParams();
-  products: IProduct[];  
+  products: IProduct[];
+  brands: IBrand[];
+  types: IType[];  
   totalCount: number;
   constructor(private shopService: ShopService) { }
 
@@ -24,6 +27,22 @@ export class NavBarComponent implements OnInit {
       this.shopParams.pageSize = response.pageSize;
       this.totalCount = response.count;
       console.log('nav-bar'+this.shopParams);
+    }, error => {
+      console.log(error);
+    })
+  }
+  getBrands() {
+    this.shopService.getBrands().subscribe(response => {
+      // this.brands = response;
+      this.brands = [{id: 0, name: 'All'}, ...response]
+    }, error => {
+      console.log(error);
+    })
+  }
+  getTypes() {
+    this.shopService.getTypes().subscribe(response => {
+      // this.types = response;
+      this.types = [{id: 0, name: 'All'}, ...response];
     }, error => {
       console.log(error);
     })
