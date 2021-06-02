@@ -1,0 +1,13 @@
+<div class="container">
+    <button class="btn btn-outline-danger me-3" (click)="get404Error()">Not Found</button>
+    <button class="btn btn-outline-danger me-3" (click)="get500Error()">Server Error</button>
+    <button class="btn btn-outline-danger me-3" (click)="get400Error()">Bad Request</button>
+    <button class="btn btn-outline-danger me-3" (click)="get400ValidationError()">Validation Error</button>
+    <div class="justify-content-between" *ngIf="validationErrors">
+        <ul>
+            <li *ngFor="let error of validationErrors">
+                {{error}}
+            </li>
+        </ul>
+    </div>
+</div>
